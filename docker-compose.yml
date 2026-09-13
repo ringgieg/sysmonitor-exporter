@@ -1,0 +1,30 @@
+# SysMonitor Exporter 的 Docker Compose 示例
+# 用法：
+#   1. 把 config.yaml 里的 username / password 填成真实凭据
+#   2. docker compose up -d
+#   3. 浏览器或 curl 访问 http://localhost:9108/metrics
+
+services:
+  sysmonitor-exporter:
+    image: ghcr.io/ringgieg/sysmonitor-exporter:latest
+    container_name: sysmonitor-exporter
+    restart: unless-stopped
+    ports:
+      - "9108:9108"
+    volumes:
+      # 宿主机上填好凭据的 config.yaml 覆盖镜像内的默认配置（只读挂载）
+      - ./config.yaml:/etc/sysmonitor-exporter/config.yaml:ro
+    environment:
+      TZ: Asia/Shanghai
+    # 想用本地源码自行构建而不是拉 ghcr 镜像，换成下面两行：
+    # build: .
+    # image: sysmonitor-exporter:local
+    # 排障时取消下行注释，开启 debug 日志（页面 dump、请求记录）：
+    # command: ["-config", "/etc/sysmonitor-exporter/config.yaml", "-debug"]
+    healthcheck:
+      # 镜像内已内置 curl
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9108/metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
