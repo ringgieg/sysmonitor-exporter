@@ -1,0 +1,29 @@
+# SysMonitor Prometheus Exporter 配置文件
+#
+# 监控多个运行 SysMonitor.aspx 的老式 ASPX 网站，
+# 采集页面上的磁盘、内存、IIS 进程内存、飞行文件数量及 Oracle 会话信息。
+
+# exporter 监听地址
+listen: ":9108"
+
+# 抓取目标页面的默认超时（页面内部要查询 WMI 和 Oracle，可能较慢）
+scrape_timeout: 15s
+
+# 抓取结果缓存时间，避免频繁刷新慢页面；0 表示不缓存
+cache_ttl: 30s
+
+# 要监控的目标列表
+targets:
+  - name: "web-server-1"                 # 指标中的 target 标签，必填但可为空（空则用 URL）
+    url: "http://172.17.1.66/sys/sysmonitor/SysMonitor.aspx"
+    username: ""                         # ← 必填："航空气象综合信息服务系统"的登录账号（自动登录 login.aspx）
+    password: ""                         # ← 必填：登录密码
+    # insecure_skip_verify: false        # 可选：HTTPS 证书校验失败时置 true
+    # timeout: 20s                       # 可选：覆盖全局 scrape_timeout
+    # headers:                           # 可选：附加请求头
+    #   X-Custom-Header: value
+
+  - name: "web-server-2"
+    url: "http://172.17.1.66/sys/sysmonitor/SysMonitor.aspx"
+    username: ""                         # ← 必填：登录账号
+    password: ""                         # ← 必填：登录密码

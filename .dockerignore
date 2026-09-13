@@ -1,0 +1,7 @@
+.git
+.github
+.dockerignore
+Dockerfile
+*.exe
+sysmonitor-dump-*.htm
+dist/
